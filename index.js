@@ -186,7 +186,7 @@ class HandlebarsPlugin {
      * @param  {String} outputPath  - webpack output path for build results
      */
     compileEntryFile(sourcePath, outputPath) {
-        let targetFilepath = getTargetFilepath(sourcePath, this.options.output);
+        const originalTargetFilepath = getTargetFilepath(sourcePath, this.options.output);
         // fetch template content
         let templateContent = this.readFile(sourcePath, "utf-8");
         templateContent = this.options.onBeforeCompile(Handlebars, templateContent) || templateContent;
@@ -194,8 +194,10 @@ class HandlebarsPlugin {
         const template = Handlebars.compile(templateContent);
         const data = this.options.onBeforeRender(Handlebars, this.data) || this.data;
         // compile template
-        let result = template(data);
-        result = this.options.onBeforeSave(Handlebars, result, targetFilepath) || result;
+        const originalResultHtml = template(data);
+        const customResult = this.options.onBeforeSave(Handlebars, originalResultHtml, originalTargetFilepath);
+        const result = customResult.resultHtml || originalResultHtml;
+        let targetFilepath = customResult.targetFilepath || originalTargetFilepath;
 
         if (targetFilepath.includes(outputPath)) {
             // change the destination path relative to webpacks output folder and emit it via webpack
