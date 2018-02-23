@@ -192,7 +192,7 @@ class HandlebarsPlugin {
         templateContent = this.options.onBeforeCompile(Handlebars, templateContent) || templateContent;
         // create template
         const template = Handlebars.compile(templateContent);
-        const data = this.options.onBeforeRender(Handlebars, this.data) || this.data;
+        const data = this.options.onBeforeRender(Handlebars, this.data, originalTargetFilepath) || this.data;
         // compile template
         const originalResultHtml = template(data);
         const customResult = this.options.onBeforeSave(Handlebars, originalResultHtml, originalTargetFilepath);
