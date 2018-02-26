@@ -196,8 +196,16 @@ class HandlebarsPlugin {
         // compile template
         const originalResultHtml = template(data);
         const customResult = this.options.onBeforeSave(Handlebars, originalResultHtml, originalTargetFilepath);
-        const result = customResult.resultHtml || originalResultHtml;
-        let targetFilepath = customResult.targetFilepath || originalTargetFilepath;
+        let result = originalResultHtml;
+        let targetFilepath = originalTargetFilepath;
+        if (typeof customResult === "object") {
+            if (customResult.resultHtml) {
+                result = customResult.resultHtml;
+            }
+            if (customResult.targetFilepath) {
+                targetFilepath = customResult.targetFilepath;
+            }
+        }
 
         if (targetFilepath.includes(outputPath)) {
             // change the destination path relative to webpacks output folder and emit it via webpack
